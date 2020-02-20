@@ -1,0 +1,36 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+form {
+  margin: 20px auto;
+  padding: 10px;
+  width: 80vw;
+}
+
+label,
+input {
+  display: inline-block;
+  margin: 5px;
+}
+
+label {
+  width: 30%;
+  margin: 5px;
+  text-align: left;
+}
+
+fieldset {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  border: none;
+  background-color: teal;
+  color: white;
+  font-size: 1rem;
+  border-radius: 10px;
+  padding: 5px;
+}
