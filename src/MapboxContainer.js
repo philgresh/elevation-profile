@@ -7,24 +7,27 @@ const initialState = {
   zoom: 10
 };
 
+const defaultStyle = 'mapbox://styles/mapbox/streets-v9';
+
 const Map = ReactMapboxGl({
   accessToken:
     'pk.eyJ1IjoicGdyZXM1NDI2OCIsImEiOiJjazY2dDQ1Y2owa2FrM2xuc2d3MTMzZ2g1In0.5p1KOaTO_mruaUlSoDWxNA'
 });
 
-const MapboxContainer = props => {
+const MapboxContainer = () => {
   const [state, setState] = useState(initialState);
 
   return (
     <Map
-      style="mapbox://styles/mapbox/streets-v9"
+      // eslint-disable-next-line react/style-prop-object
+      style={defaultStyle}
       // containerStyle={{
       //   height: "100vh",
       //   width: "100vw"
       // }}
     >
       <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15' }}>
-        <Feature coordinates={[-0.481747846041145, 51.3233379650232]} />
+        <Feature coordinates={[state.lng, state.lat]} />
       </Layer>
     </Map>
   );

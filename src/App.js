@@ -53,6 +53,7 @@ export default function App() {
         } = resp;
         if (status === 'OK') {
           // console.log({ results });
+          // eslint-disable-next-line max-len
           const { normalizedPoints, yMin, yMax, waterline: wl } = transcribePoints(
             results,
             everyTenth
