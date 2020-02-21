@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import update from "immutability-helper";
 import axios from 'axios';
-import { transcribePoints, setUpGetPoints, everyTenth, svgPath } from './functions';
+import { transcribePoints, setUpGetPoints, svgPath } from './functions';
 import Chart from './Chart';
 import Inputs from './Input';
 import MapboxContainer from './MapboxContainer';
@@ -13,14 +13,19 @@ const numSamplePoints = 500;
 const smoothingFactor = 0.1;
 let waterline = -100000;
 
+function everyTenth(arr) {
+  return arr.filter((e, i) => i % 10 === 10 - 1);
+}
+
 export default function App() {
   const [state, setState] = useState({
     lat0: -13.644694,
     lon0: -172.3935,
     lat1: -17.89175,
     lon1: 177.667722,
-    pointData: []
+    pointData: [],
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const onChangeSetState = ({ target }) => {
     const { name, value } = target;
@@ -32,16 +37,17 @@ export default function App() {
 
   async function onFormButtonClick(e) {
     e.preventDefault();
+    setSubmitting(true);
     const { lat0, lon0, lat1, lon1 } = state;
     const points = [
       {
         lat: lat0,
-        lon: lon0
+        lon: lon0,
       },
       {
         lat: lat1,
-        lon: lon1
-      }
+        lon: lon1,
+      },
     ];
 
     const { url, params } = await setUpGetPoints(points, numSamplePoints);
@@ -49,27 +55,29 @@ export default function App() {
       .get(url, { params })
       .then(resp => {
         const {
-          data: { status, results }
+          data: { status, results },
         } = resp;
         if (status === 'OK') {
+          console.log(results);
           // console.log({ results });
           // eslint-disable-next-line max-len
-          const { normalizedPoints, yMin, yMax, waterline: wl } = transcribePoints(
-            results,
-            everyTenth
-          );
-          waterline = wl;
-          console.log({ normalizedPoints, yMin, yMax, waterline });
-          const arrayOfCoordinatePairs = normalizedPoints.map(({ x, y }) => [
-            x * width,
-            height - y * height
-          ]);
-          setState({ ...state, pointData: [...arrayOfCoordinatePairs] });
+          // const { normalizedPoints, yMin, yMax, waterline: wl } = transcribePoints(
+          //   results,
+          //   everyTenth
+          // );
+          // waterline = wl;
+          // console.log({ normalizedPoints, yMin, yMax, waterline });
+          // const arrayOfCoordinatePairs = normalizedPoints.map(({ x, y }) => [
+          //   x * width,
+          //   height - y * height
+          // ]);
+          // setState({ ...state, pointData: [...arrayOfCoordinatePairs] });
         }
       })
       .catch(err => {
         console.error('ERROR', { err });
-      });
+      })
+      .finally(() => setSubmitting(false));
   }
 
   const hasPointData = state.pointData.length > 0;

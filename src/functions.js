@@ -3,7 +3,7 @@ import React from 'react';
 export async function setUpGetPoints(points, samples = 100) {
   let path = '';
   points.forEach(({ lat, lon }, index) => {
-    console.log(lat, lon);
+    // console.log(lat, lon);
     path += `${lat},${lon}`;
     if (index !== points.length - 1) path += '|';
   });
@@ -17,22 +17,19 @@ export async function setUpGetPoints(points, samples = 100) {
   return { url, params };
 }
 
-export function everyTenth(point, index) {
-  if (index % 10 === 0) return point;
-}
-
-export function transcribePoints(inputArray, filterFunction) {
-  const results = filterFunction ? inputArray.filter(filterFunction) : inputArray;
-  let first = results[0].location.lng;
-  let last = results[results.length - 1].location.lng;
+export function transcribePoints(inputArr, filterFunction) {
+  console.log(inputArr, filterFunction);
+  const results = filterFunction ? inputArr.filter(filterFunction) : inputArr;
+  const first = results[0].location.lng;
+  const last = results[results.length - 1].location.lng;
   const eastToWest = first > last;
   const westToEast = first < last;
 
   const crossesAntimeridianEastToWest = eastToWest && first > 0 && last < 0;
   const crossesAntimeridianWestToEast = westToEast && first < 0 && last > 0;
 
-  let yMin = Infinity,
-    yMax = -Infinity;
+  let yMin = Infinity;
+  let yMax = -Infinity;
   const points = results.map(({ elevation, location: { lng } }) => {
     let x = lng;
     if (crossesAntimeridianEastToWest && lng < 0) {
@@ -71,7 +68,7 @@ const line = (pointA, pointB) => {
   const lengthX = pointB[0] - pointA[0];
   const lengthY = pointB[1] - pointA[1];
   return {
-    length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+    length: Math.sqrt(lengthX ** 2 + lengthY ** 2),
     angle: Math.atan2(lengthY, lengthX)
   };
 };
@@ -124,6 +121,8 @@ const bezierCommand = (point, i, a, smoothing) => {
 //           - a (array): complete array of points coordinates
 //       O:  - (string) a svg path command
 // O:  - (string): a Svg <path> element
+
+// eslint-disable-next-line max-len
 export function svgPath(points, pathProps, smoothing = 0.1, command = bezierCommand) {
   // Borrowed from https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
   // https://codepen.io/francoisromain/pen/dzoZZj?editors=1010

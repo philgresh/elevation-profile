@@ -1,36 +1,84 @@
-import React, { useState } from 'react';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
+import React, { useEffect, useRef, useState } from 'react';
+import ReactMapGL, { FlyToInterpolator, Marker } from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import Pin from './Pin';
 
-const initialState = {
-  lng: -118.4863,
-  lat: 37.0922,
-  zoom: 10
+// this is what state gets initialised as
+const INITIAL_STATE = {
+  height: 'calc(100vh - 80px)',
+  width: '100%',
+  position: 'absolute',
+  longitude: 180,
+  latitude: -14,
+  zoom: 5,
 };
 
-const defaultStyle = 'mapbox://styles/mapbox/streets-v9';
+// const DRC_MAP = {
+//   longitude: 180,
+//   latitude: -14,
+//   zoom: 5,
+//   transitionDuration: 500,
+//   transitionInterpolator: new FlyToInterpolator(),
+//   transitionEasing: t => t * (2 - t),
+// };
 
-const Map = ReactMapboxGl({
-  accessToken:
-    'pk.eyJ1IjoicGdyZXM1NDI2OCIsImEiOiJjazY2dDQ1Y2owa2FrM2xuc2d3MTMzZ2g1In0.5p1KOaTO_mruaUlSoDWxNA'
-});
+const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_API_KEY;
+const mapStyle = 'mapbox://styles/pgres54268/cjuiu9aay60dx1fp784rt3x7r';
 
-const MapboxContainer = () => {
-  const [state, setState] = useState(initialState);
+const Markers = React.memo(({ points }) =>
+  points.map(([lng, lat], idx) => (
+    <Marker
+      longitude={lng}
+      latitude={lat}
+      offsetTop={-20}
+      offsetLeft={-10}
+      key={`${lng},${lat}`}
+      title={`${lng},${lat}`}
+      // draggable
+      // onDragStart={this._onMarkerDragStart}
+      // onDrag={this._onMarkerDrag}
+      // onDragEnd={this._onMarkerDragEnd}
+    >
+      <Pin size={20} />
+    </Marker>
+  )),
+);
+
+// classes are so 2018 - use functional components instead!
+export default function MapboxContainer() {
+  const [loaded, setLoaded] = useState(false);
+  const [viewport, setViewport] = useState(INITIAL_STATE);
+  const [points, setPoints] = useState([]);
+
+  // useEffect(() => {
+  //   if (loaded) {
+  //     setViewport(oldViewport => ({
+  //       ...oldViewport,
+  //       ...DRC_MAP,
+  //     }));
+  //   }
+  // }, [loaded, DRC_MAP]);
+
+  const onClick = e => {
+    e.preventDefault();
+    const [lng, lat] = e.lngLat;
+    // console.log(e.lngLat);
+    setPoints(oldPoints => [...oldPoints, [lng, lat]]);
+  };
 
   return (
-    <Map
-      // eslint-disable-next-line react/style-prop-object
-      style={defaultStyle}
-      // containerStyle={{
-      //   height: "100vh",
-      //   width: "100vw"
-      // }}
+    <ReactMapGL
+      mapboxApiAccessToken={MAPBOX_TOKEN}
+      mapStyle={mapStyle}
+      onViewportChange={nextViewport =>
+        setViewport({ ...viewport, ...nextViewport })
+      }
+      onLoad={() => setLoaded(true)}
+      onClick={e => onClick(e)}
+      {...viewport}
     >
-      <Layer type="symbol" id="marker" layout={{ 'icon-image': 'marker-15' }}>
-        <Feature coordinates={[state.lng, state.lat]} />
-      </Layer>
-    </Map>
+      {<Markers points={points} />}
+    </ReactMapGL>
   );
-};
-
-export default MapboxContainer;
+}
