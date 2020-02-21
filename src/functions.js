@@ -1,11 +1,17 @@
 import React from 'react';
 
-export async function setUpGetPoints(points, samples = 100) {
-  let path = '';
-  points.forEach(([lng, lat], index) => {
+export function replotPointsNearAntimeridian(points) {
+  const newPoints = points.map(([lng, lat]) => {
     if (lng > 180) lng -= 360;
     if (lng < -180) lng += 360;
-    // console.log(lat, lon);
+    return [lng, lat];
+  });
+  return newPoints;
+}
+export async function setUpGetPoints(points, samples = 100) {
+  let path = '';
+  const newPoints = replotPointsNearAntimeridian(points);
+  newPoints.forEach(([lng, lat], index) => {
     path += `${lat},${lng}`;
     if (index !== points.length - 1) path += '|';
   });
