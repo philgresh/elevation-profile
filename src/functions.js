@@ -2,18 +2,21 @@ import React from 'react';
 
 export async function setUpGetPoints(points, samples = 100) {
   let path = '';
-  points.forEach(({ lat, lon }, index) => {
+  points.forEach(([lng, lat], index) => {
+    if (lng > 180) lng -= 360;
+    if (lng < -180) lng += 360;
     // console.log(lat, lon);
-    path += `${lat},${lon}`;
+    path += `${lat},${lng}`;
     if (index !== points.length - 1) path += '|';
   });
   const params = {
     samples,
     key: 'AIzaSyBP7L7PhTrk0pv8cZDbapLAfX6B3ldaHfE',
-    path
+    path,
   };
   const url =
-    'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
+    // 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
+    'https://maps.googleapis.com/maps/api/elevation/json';
   return { url, params };
 }
 
@@ -42,7 +45,7 @@ export function transcribePoints(inputArr, filterFunction) {
     yMax = Math.max(yMax, elevation);
     return {
       x,
-      elevation
+      elevation,
     };
   });
 
@@ -52,7 +55,7 @@ export function transcribePoints(inputArr, filterFunction) {
   const waterline = (0 - yMin) / (yMax - yMin);
   const normalizedPoints = points.map(({ x, elevation }) => ({
     x: (x - xMin) / (xMax - xMin),
-    y: (elevation - yMin) / (yMax - yMin)
+    y: (elevation - yMin) / (yMax - yMin),
     // y: elevation
   }));
 
@@ -69,7 +72,7 @@ const line = (pointA, pointB) => {
   const lengthY = pointB[1] - pointA[1];
   return {
     length: Math.sqrt(lengthX ** 2 + lengthY ** 2),
-    angle: Math.atan2(lengthY, lengthX)
+    angle: Math.atan2(lengthY, lengthX),
   };
 };
 
@@ -123,19 +126,31 @@ const bezierCommand = (point, i, a, smoothing) => {
 // O:  - (string): a Svg <path> element
 
 // eslint-disable-next-line max-len
-export function svgPath(points, pathProps, smoothing = 0.1, command = bezierCommand) {
+export function svgPath(
+  points,
+  pathProps,
+  smoothing = 0.1,
+  command = bezierCommand,
+) {
   // Borrowed from https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
   // https://codepen.io/francoisromain/pen/dzoZZj?editors=1010
   const { fill = 'none', stroke = 'grey', strokeWidth = '3px' } = pathProps;
   // build the d attributes by looping over the points
   const d = points.reduce(
     (acc, point, i, a) =>
-      i === 0 ? `M ${point[0]},${point[1]}` : `${acc} ${command(point, i, a, smoothing)}`,
-    ''
+      i === 0
+        ? `M ${point[0]},${point[1]}`
+        : `${acc} ${command(point, i, a, smoothing)}`,
+    '',
   );
   return (
     <>
-      <path d={`${d}`} fill={`${fill}`} stroke={`${stroke}`} strokeWidth={`${strokeWidth}`} />
+      <path
+        d={`${d}`}
+        fill={`${fill}`}
+        stroke={`${stroke}`}
+        strokeWidth={`${strokeWidth}`}
+      />
     </>
   );
 }
