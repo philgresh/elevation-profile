@@ -21,8 +21,8 @@ export async function setUpGetPoints(points, samples = 100) {
     path,
   };
   const url =
-    // 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
-    'https://maps.googleapis.com/maps/api/elevation/json';
+    'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
+  // 'https://maps.googleapis.com/maps/api/elevation/json';
   return { url, params };
 }
 
