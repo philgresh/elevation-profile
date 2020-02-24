@@ -2,14 +2,14 @@ import React from 'react';
 import { Marker } from 'react-map-gl';
 import Pin from './Pin';
 
-const Markers = ({ points, onMarkerDragEnd }) => {
+const Markers = ({ pins, onMarkerDragEnd }) => {
   const commonProps = {
     offsetTop: -20,
     offsetLeft: -10,
     draggable: true,
   };
 
-  return points.map(([lng, lat], idx) => (
+  return pins.map(([lng, lat], idx) => (
     <Marker
       longitude={lng}
       latitude={lat}

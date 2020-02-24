@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import { scaleLinear } from 'd3-scale';
 import { line as d3line } from 'd3-shape';
 // import Chart from './Chart';
@@ -14,7 +16,7 @@ const elevReducer = data =>
     { minElev: Infinity, maxElev: -Infinity },
   );
 
-const ChartContainer = ({ chartOptions, smoothingFactor, elevationData }) => {
+const ChartContainer = ({ chartOptions, elevationData }) => {
   const { width, height } = chartOptions;
   const { minElev, maxElev } = elevReducer(elevationData);
 
@@ -42,4 +44,11 @@ const ChartContainer = ({ chartOptions, smoothingFactor, elevationData }) => {
   );
 };
 
-export default ChartContainer;
+const mapStateToProps = state => {
+  return {
+    elevationData: state.elevationData,
+    chartOptions: state.chartOptions,
+  };
+};
+
+export default connect(mapStateToProps, null)(ChartContainer);
