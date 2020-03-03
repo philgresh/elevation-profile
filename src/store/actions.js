@@ -1,28 +1,31 @@
 import axios from 'axios';
-import fetch from 'cross-fetch';
+// import fetch from 'cross-fetch';
 const replotPointsNearAntimeridian = pins => {
   const newPins = pins.map(([lng, lat]) => {
-    if (lng > 180) lng -= 360;
-    if (lng < -180) lng += 360;
-    return [lng, lat];
+    let newLng = lng;
+    if (lng > 180) newLng -= 360;
+    if (lng < -180) newLng += 360;
+    return [newLng, lat];
   });
   return newPins;
 };
 async function setUpGetPoints(pins, samples = 100) {
   const newPins = replotPointsNearAntimeridian(pins);
+  const key = process.env.REACT_APP_GOOGLE_MAPS_ELEV_API_KEY;
   const path = newPins.reduce((acc, [lng, lat], index) => {
-    acc += `${lat},${lng}`;
-    if (index !== newPins.length - 1) acc += '|';
-    return acc;
+    let newAcc = `${acc}${lat},${lng}`;
+    if (index !== newPins.length - 1) newAcc += '|';
+    return newAcc;
   }, '');
   const params = {
     samples,
     path,
-    key: 'AIzaSyBP7L7PhTrk0pv8cZDbapLAfX6B3ldaHfE',
+    key,
   };
   const url =
-    'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
-  // 'https://maps.googleapis.com/maps/api/elevation/json';
+    process.env.NODE_ENV === 'production'
+      ? 'https://maps.googleapis.com/maps/api/elevation/json'
+      : 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
   return { url, params };
 }
 
@@ -36,29 +39,31 @@ const indexedElevData = data => {
 };
 
 export const setSubmitting = ({ submitting }) => {
-  return (dispatch, getState) => {
-    dispatch({ type: 'SET_SUBMITTING', submitting: submitting });
+  return dispatch => {
+    dispatch({ submitting, type: 'SET_SUBMITTING' });
   };
 };
 
-export const clearPins = () => dispatch => dispatch({ type: 'CLEAR_PINS' });
+export const clearPinsAction = () => dispatch =>
+  dispatch({ type: 'CLEAR_PINS' });
 
-export const getElevationData = () => {
+export const getElevationDataAction = () => {
   return async (dispatch, getState) => {
-    const { pins, submitting } = getState();
+    const { pins } = getState();
 
     dispatch(setSubmitting({ submitting: true }));
 
     const { url, params } = await setUpGetPoints(pins);
 
+    // eslint-disable-next-line no-return-await
     return await axios
       .get(url, { params })
       .then(({ data }) => {
         const indexedData = indexedElevData(data);
         dispatch({
           type: 'SET_ELEVATION_DATA',
-          elevationData: indexedData,
-          mapHeight: '80vh',
+          elevationData: [...indexedData],
+          mapHeight: '75vh',
         });
       })
       .catch(err => {
@@ -68,10 +73,10 @@ export const getElevationData = () => {
   };
 };
 
-export const pushPin = pin => {
+export const pushPinAction = pin => {
   return dispatch => dispatch({ type: 'PUSH_PIN', pin });
 };
 
-export const setPins = pins => {
+export const setPinsAction = pins => {
   return dispatch => dispatch({ type: 'SET_PINS', pins });
 };

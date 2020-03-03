@@ -1,23 +1,18 @@
-import React, { useState, useMemo, useCallback, PureComponent } from 'react';
-import { connect, useSelector } from 'react-redux';
-import ReactMapGL, {
-  Layer,
-  Marker,
-  NavigationControl,
-  Source,
-} from 'react-map-gl';
-import styled from 'styled-components';
+/* eslint-disable react/prop-types */
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import ReactMapGL, { Layer, NavigationControl, Source } from 'react-map-gl';
 import update from 'immutability-helper';
 import Markers from './Markers';
-import { pushPin, setPins } from '../store/actions';
-import { replotPinsNearAntimeridian } from '../functions';
+import { pushPinAction, setPinsAction } from '../store/actions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_API_KEY;
 const mapStyle = 'mapbox://styles/pgres54268/cjuiu9aay60dx1fp784rt3x7r';
 
-const MapboxContainer = ({ mapHeight = '100vh', pins, pushPin, setPins }) => {
-  const [loaded, setLoaded] = useState(false);
+const MapboxContainer = ({ mapHeight, pins, hasPins, actions }) => {
+  const { pushPin, setPins } = actions;
+  // const [loaded, setLoaded] = useState(false);
   const [viewport, setViewport] = useState({
     height: mapHeight,
     width: '100vw',
@@ -34,7 +29,6 @@ const MapboxContainer = ({ mapHeight = '100vh', pins, pushPin, setPins }) => {
 
   const onMarkerDragEnd = (e, index) => {
     e.preventDefault();
-    console.log(e.lngLat, index);
     const newPins = update(pins, {
       [index]: { $set: [...e.lngLat] },
     });
@@ -50,20 +44,23 @@ const MapboxContainer = ({ mapHeight = '100vh', pins, pushPin, setPins }) => {
       // console.log(pins, newPins);
       // setPins(newPins);
     }
-    const newViewport = update(viewport, { $merge: { ...nextViewport } });
-    setViewport(newViewport);
+
+    setViewport({
+      ...nextViewport,
+      width: '100vw',
+    });
   };
 
   const linestringGeoJSON = { type: 'LineString', coordinates: [...pins] };
-  const hasPins = pins.length > 0 || false;
   return (
     <div>
       <ReactMapGL
         mapboxApiAccessToken={MAPBOX_TOKEN}
         mapStyle={mapStyle}
         onViewportChange={onViewportChange}
-        onLoad={() => setLoaded(true)}
+        // onLoad={() => setLoaded(true)}
         onClick={e => onMapClick(e)}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...viewport}
         height={mapHeight}
       >
@@ -92,8 +89,10 @@ const MapboxContainer = ({ mapHeight = '100vh', pins, pushPin, setPins }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    pushPin: pin => dispatch(pushPin(pin)),
-    setPins: pins => dispatch(setPins(pins)),
+    actions: {
+      pushPin: pin => dispatch(pushPinAction(pin)),
+      setPins: pins => dispatch(setPinsAction(pins)),
+    },
   };
 };
 
@@ -102,7 +101,7 @@ const mapStateToProps = state => {
     submitting: state.submitting,
     hasPins: state.pins.length > 0,
     pins: state.pins,
-    mapHeight: state.mapHeight,
+    // mapHeight: state.mapHeight,
   };
 };
 

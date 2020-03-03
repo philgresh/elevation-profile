@@ -7,7 +7,7 @@ import './index.css';
 import App from './App';
 import reducer from './store/reducer';
 import * as serviceWorker from './serviceWorker';
-require('dotenv').config();
+// require('dotenv').config();
 
 const middlewares = [thunkMiddleware];
 

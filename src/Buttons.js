@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+import Loading from 'react-simple-loading';
 import styled from 'styled-components';
-import { getElevationData, clearPins } from './store/actions';
+import { getElevationDataAction, clearPinsAction } from './store/actions';
 
 const StyledButtons = styled.div`
   display: flex;
@@ -38,14 +40,10 @@ const StyledClearButton = styled(StyledButton)`
   }
 `;
 
-const GetElevationProfileButton = ({ getElevationData, disabled }) => {
+const GetElevationProfileButton = ({ getElevationData, submitting }) => {
   return (
-    <StyledButton
-      onClick={getElevationData}
-      disabled={disabled}
-      id="get-elevation-profile-button"
-    >
-      Get my elevation profile
+    <StyledButton onClick={getElevationData} id="get-elevation-profile-button">
+      {submitting ? <Loading /> : 'Get my elevation profile'}
     </StyledButton>
   );
 };
@@ -55,6 +53,7 @@ const ClearPinsButton = ({ disabled, clearPins }) => (
     Clear pins
   </StyledClearButton>
 );
+
 const Buttons = ({ getElevationData, clearPins, hasPins, submitting }) => {
   const disabled = !hasPins || submitting;
   return (
@@ -62,7 +61,6 @@ const Buttons = ({ getElevationData, clearPins, hasPins, submitting }) => {
       <GetElevationProfileButton
         getElevationData={getElevationData}
         submitting={submitting}
-        disabled={disabled}
       />
       {hasPins && <ClearPinsButton clearPins={clearPins} disabled={disabled} />}
     </StyledButtons>
@@ -71,8 +69,8 @@ const Buttons = ({ getElevationData, clearPins, hasPins, submitting }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getElevationData: () => dispatch(getElevationData()),
-    clearPins: () => dispatch(clearPins()),
+    getElevationData: () => dispatch(getElevationDataAction()),
+    clearPins: () => dispatch(clearPinsAction()),
   };
 };
 
