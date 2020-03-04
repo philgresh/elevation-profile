@@ -22,9 +22,9 @@ const App = ({ hasElevationData, chartHeight, chartMargin }) => {
 
 const mapStateToProps = state => {
   return {
-    hasElevationData: state.elevationData.length > 0,
-    chartHeight: state.chartOptions.height,
-    chartMargin: state.chartOptions.margin,
+    hasElevationData: state.chart.elevationData.length > 0,
+    chartHeight: state.chart.chartProps.height,
+    chartMargin: state.chart.chartProps.margin,
   };
 };
 

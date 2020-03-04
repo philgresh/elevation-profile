@@ -5,7 +5,7 @@ import ReactMapGL, { Layer, NavigationControl, Source } from 'react-map-gl';
 import update from 'immutability-helper';
 import styled from 'styled-components';
 import Markers from './Markers';
-import { pushPinAction, setPinsAction } from '../store/actions';
+import { pushPinAction, setPinsAction } from '../store/actions/mapActions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_API_KEY;
@@ -16,15 +16,15 @@ const StyledMap = styled.div`
   /* transition: transform 300ms ease-in-out; */
 `;
 
-const MapboxContainer = ({ mapHeight, pins, hasPins, actions }) => {
+const MapboxContainer = ({ mapHeight, pins, actions }) => {
+  const hasPins = pins.length > 0;
   const { pushPin, setPins } = actions;
-  // const [loaded, setLoaded] = useState(false);
   const [viewport, setViewport] = useState({
     height: mapHeight,
     width: '100vw',
     position: 'absolute',
-    longitude: -133,
-    latitude: 37,
+    longitude: -119,
+    latitude: 36,
     zoom: 5,
   });
 
@@ -104,9 +104,8 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    submitting: state.submitting,
-    hasPins: state.pins.length > 0,
-    pins: state.pins,
+    submitting: state.chart.submitting,
+    pins: state.map.pins,
     // mapHeight: state.mapHeight,
   };
 };

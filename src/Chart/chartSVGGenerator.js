@@ -8,8 +8,8 @@ import { select, selectAll } from 'd3-selection';
 import { line as d3line, curveMonotoneX } from 'd3-shape';
 import { interpolateRdBu } from 'd3-scale-chromatic';
 
-const ChartSVG = ({ chartOptions, elevationData }) => {
-  const { width, height, margin } = chartOptions;
+const ChartSVG = ({ chartProps, elevationData }) => {
+  const { width, height, margin } = chartProps;
 
   const ref = useRef();
 

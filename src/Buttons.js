@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Loading from 'react-simple-loading';
 import styled from 'styled-components';
-import { getElevationDataAction, clearPinsAction } from './store/actions';
+import { getElevationDataAction } from './store/actions/chartActions';
+import { clearPinsAction } from './store/actions/mapActions';
 
 const StyledButtons = styled.div`
   display: flex;
@@ -103,8 +104,8 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    submitting: state.submitting,
-    numPins: state.pins.length,
+    submitting: state.chart.submitting,
+    numPins: state.map.pins.length,
   };
 };
 

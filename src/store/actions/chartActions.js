@@ -11,8 +11,9 @@ const replotPointsNearAntimeridian = pins => {
   });
   return newPins;
 };
-async function setUpGetPoints(pins) {
-  const samples = Math.max(NUM_SAMPLES * pins.length, 500);
+
+const getURLParams = async pins => {
+  const samples = Math.max(NUM_SAMPLES * (pins.length - 1), 500);
   const newPins = replotPointsNearAntimeridian(pins);
   const key = process.env.REACT_APP_GOOGLE_MAPS_ELEV_API_KEY;
   const path = newPins.reduce((acc, [lng, lat], index) => {
@@ -30,7 +31,7 @@ async function setUpGetPoints(pins) {
       ? 'https://maps.googleapis.com/maps/api/elevation/json'
       : 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/elevation/json';
   return { url, params };
-}
+};
 
 const indexedElevData = data => {
   return data.results.map((p, index) => ({
@@ -47,16 +48,14 @@ export const setSubmitting = ({ submitting }) => {
   };
 };
 
-export const clearPinsAction = () => dispatch =>
-  dispatch({ type: 'CLEAR_PINS' });
-
 export const getElevationDataAction = () => {
   return async (dispatch, getState) => {
-    const { pins } = getState();
+    const { map } = getState();
+    const { pins } = map;
 
     dispatch(setSubmitting({ submitting: true }));
 
-    const { url, params } = await setUpGetPoints(pins);
+    const { url, params } = await getURLParams(pins);
 
     // eslint-disable-next-line no-return-await
     return await axios
@@ -70,16 +69,8 @@ export const getElevationDataAction = () => {
         });
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
       })
       .finally(() => dispatch(setSubmitting({ submitting: false })));
   };
-};
-
-export const pushPinAction = pin => {
-  return dispatch => dispatch({ type: 'PUSH_PIN', pin });
-};
-
-export const setPinsAction = pins => {
-  return dispatch => dispatch({ type: 'SET_PINS', pins });
 };

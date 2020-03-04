@@ -3,14 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ChartSVG from './chartSVGGenerator';
 
-const ChartContainer = ({ chartOptions, elevationData }) => {
-  return <ChartSVG chartOptions={chartOptions} elevationData={elevationData} />;
+const ChartContainer = ({ chartProps, elevationData }) => {
+  return <ChartSVG chartProps={chartProps} elevationData={elevationData} />;
 };
 
 const mapStateToProps = state => {
   return {
-    elevationData: state.elevationData,
-    chartOptions: state.chartOptions,
+    elevationData: state.chart.elevationData,
+    chartProps: state.chart.chartProps,
   };
 };
 
