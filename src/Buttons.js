@@ -40,10 +40,31 @@ const StyledClearButton = styled(StyledButton)`
   }
 `;
 
-const GetElevationProfileButton = ({ getElevationData, submitting }) => {
+const GetElevationProfileButton = ({
+  getElevationData,
+  submitting,
+  numPins,
+}) => {
+  let disabled = submitting;
+  let buttonText = (
+    <>
+      <strong>Get my elevation profile!</strong>
+      <br />
+      Or click to add more points
+    </>
+  );
+  if (numPins === 0) buttonText = 'Click anywhere to drop an endpoint';
+  if (numPins === 1) {
+    buttonText = 'Click anywhere to drop another endpoint';
+    disabled = true;
+  }
   return (
-    <StyledButton onClick={getElevationData} id="get-elevation-profile-button">
-      {submitting ? <Loading /> : 'Get my elevation profile'}
+    <StyledButton
+      disabled={disabled}
+      onClick={getElevationData}
+      id="get-elevation-profile-button"
+    >
+      {submitting ? <Loading /> : buttonText}
     </StyledButton>
   );
 };
@@ -54,15 +75,21 @@ const ClearPinsButton = ({ disabled, clearPins }) => (
   </StyledClearButton>
 );
 
-const Buttons = ({ getElevationData, clearPins, hasPins, submitting }) => {
-  const disabled = !hasPins || submitting;
+const Buttons = ({ getElevationData, clearPins, numPins, submitting }) => {
+  const hasPins = numPins > 0;
   return (
     <StyledButtons>
       <GetElevationProfileButton
         getElevationData={getElevationData}
         submitting={submitting}
+        numPins={numPins}
       />
-      {hasPins && <ClearPinsButton clearPins={clearPins} disabled={disabled} />}
+      {hasPins && (
+        <ClearPinsButton
+          clearPins={clearPins}
+          disabled={!hasPins || submitting}
+        />
+      )}
     </StyledButtons>
   );
 };
@@ -77,7 +104,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     submitting: state.submitting,
-    hasPins: state.pins.length > 0,
+    numPins: state.pins.length,
   };
 };
 

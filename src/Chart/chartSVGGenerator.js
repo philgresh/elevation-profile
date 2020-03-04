@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { extent } from 'd3-array';
 import { axisLeft } from 'd3-axis';
 import { scaleDiverging, scaleLinear } from 'd3-scale';
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 import { line as d3line, curveMonotoneX } from 'd3-shape';
 import { interpolateRdBu } from 'd3-scale-chromatic';
 
@@ -14,6 +14,7 @@ const ChartSVG = ({ chartOptions, elevationData }) => {
   const ref = useRef();
 
   useEffect(() => {
+    selectAll('svg > *').remove();
     const svg = select(ref.current);
     svg.attr('viewBox', [0, 0, width, height]);
 

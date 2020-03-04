@@ -1,5 +1,7 @@
 import axios from 'axios';
 // import fetch from 'cross-fetch';
+const NUM_SAMPLES = 100;
+
 const replotPointsNearAntimeridian = pins => {
   const newPins = pins.map(([lng, lat]) => {
     let newLng = lng;
@@ -9,7 +11,8 @@ const replotPointsNearAntimeridian = pins => {
   });
   return newPins;
 };
-async function setUpGetPoints(pins, samples = 100) {
+async function setUpGetPoints(pins) {
+  const samples = Math.max(NUM_SAMPLES * pins.length, 500);
   const newPins = replotPointsNearAntimeridian(pins);
   const key = process.env.REACT_APP_GOOGLE_MAPS_ELEV_API_KEY;
   const path = newPins.reduce((acc, [lng, lat], index) => {

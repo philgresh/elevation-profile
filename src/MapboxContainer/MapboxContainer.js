@@ -3,12 +3,18 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import ReactMapGL, { Layer, NavigationControl, Source } from 'react-map-gl';
 import update from 'immutability-helper';
+import styled from 'styled-components';
 import Markers from './Markers';
 import { pushPinAction, setPinsAction } from '../store/actions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_API_KEY;
 const mapStyle = 'mapbox://styles/pgres54268/cjuiu9aay60dx1fp784rt3x7r';
+
+const StyledMap = styled.div`
+  transition: all 1.5s ease-in-out;
+  /* transition: transform 300ms ease-in-out; */
+`;
 
 const MapboxContainer = ({ mapHeight, pins, hasPins, actions }) => {
   const { pushPin, setPins } = actions;
@@ -53,7 +59,7 @@ const MapboxContainer = ({ mapHeight, pins, hasPins, actions }) => {
 
   const linestringGeoJSON = { type: 'LineString', coordinates: [...pins] };
   return (
-    <div>
+    <StyledMap>
       <ReactMapGL
         mapboxApiAccessToken={MAPBOX_TOKEN}
         mapStyle={mapStyle}
@@ -83,7 +89,7 @@ const MapboxContainer = ({ mapHeight, pins, hasPins, actions }) => {
           <NavigationControl />
         </div>
       </ReactMapGL>
-    </div>
+    </StyledMap>
   );
 };
 

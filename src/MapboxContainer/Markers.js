@@ -18,7 +18,7 @@ const Markers = ({ pins, onMarkerDragEnd }) => {
       onDragEnd={e => onMarkerDragEnd(e, idx)}
       {...commonProps}
     >
-      <Pin size={20} fill={'#D00'} />
+      <Pin size={20} fill="#D00" />
     </Marker>
   ));
 };
