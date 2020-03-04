@@ -13,7 +13,7 @@ const replotPointsNearAntimeridian = pins => {
 };
 
 const getURLParams = async pins => {
-  const samples = Math.max(NUM_SAMPLES * (pins.length - 1), 500);
+  const samples = Math.min(NUM_SAMPLES * (pins.length - 1), 500);
   const newPins = replotPointsNearAntimeridian(pins);
   const key = process.env.REACT_APP_GOOGLE_MAPS_ELEV_API_KEY;
   const path = newPins.reduce((acc, [lng, lat], index) => {
