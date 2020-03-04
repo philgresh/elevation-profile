@@ -6,7 +6,8 @@ import ChartContainer from './Chart/ChartContainer';
 import MapboxContainer from './MapboxContainer/MapboxContainer';
 import './styles.css';
 
-const App = ({ hasElevationData, chartHeight, chartMargin }) => {
+const App = ({ elevationData, chartHeight, chartMargin }) => {
+  const hasElevationData = elevationData.length > 0;
   const chartMargins = chartMargin.top + chartMargin.bottom;
   const mapHeight = hasElevationData
     ? `calc(100vh - ${chartHeight}px - ${chartMargins}px)`
@@ -22,7 +23,7 @@ const App = ({ hasElevationData, chartHeight, chartMargin }) => {
 
 const mapStateToProps = state => {
   return {
-    hasElevationData: state.chart.elevationData.length > 0,
+    elevationData: state.chart.elevationData,
     chartHeight: state.chart.chartProps.height,
     chartMargin: state.chart.chartProps.margin,
   };

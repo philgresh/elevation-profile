@@ -46,7 +46,7 @@ const GetElevationProfileButton = ({
   submitting,
   numPins,
 }) => {
-  let disabled = submitting;
+  const disabled = submitting || numPins < 2;
   let buttonText = (
     <>
       <strong>Get my elevation profile!</strong>
@@ -57,7 +57,6 @@ const GetElevationProfileButton = ({
   if (numPins === 0) buttonText = 'Click anywhere to drop an endpoint';
   if (numPins === 1) {
     buttonText = 'Click anywhere to drop another endpoint';
-    disabled = true;
   }
   return (
     <StyledButton

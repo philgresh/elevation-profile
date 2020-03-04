@@ -1,6 +1,6 @@
 const initState = {
-  elevationData: [],
   submitting: false,
+  elevationData: [],
   chartProps: {
     width: window.innerWidth - 50,
     height: '200',
@@ -21,10 +21,6 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         elevationData: [...action.elevationData],
-        mapProps: {
-          ...state.mapProps,
-          mapHeight: action.mapHeight,
-        },
       };
     }
 

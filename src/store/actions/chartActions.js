@@ -63,8 +63,8 @@ export const getElevationDataAction = () => {
         dispatch({
           type: 'SET_ELEVATION_DATA',
           elevationData: [...indexedData],
-          mapHeight: '75vh',
         });
+        dispatch({ type: 'SET_MAP_HEIGHT', mapHeight: '75vh' });
       })
       .catch(err => {
         console.error(err);

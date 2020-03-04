@@ -24,16 +24,14 @@ const reducer = (state = initState, action) => {
       return {
         ...initState,
         pins: [],
-        elevationData: [],
       };
     }
-
-    case 'SET_MAP_HEIGHT_FULL': {
+    case 'SET_MAP_HEIGHT': {
       return {
         ...state,
         mapProps: {
           ...state.mapProps,
-          mapHeight: '100vh',
+          mapHeight: action.mapHeight,
         },
       };
     }
