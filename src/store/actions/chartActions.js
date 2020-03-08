@@ -2,15 +2,13 @@ import axios from 'axios';
 // import fetch from 'cross-fetch';
 const NUM_SAMPLES = 100;
 
-const replotPointsNearAntimeridian = pins => {
-  const newPins = pins.map(([lng, lat]) => {
+const replotPointsNearAntimeridian = pins =>
+  pins.map(([lng, lat]) => {
     let newLng = lng;
     if (lng > 180) newLng -= 360;
     if (lng < -180) newLng += 360;
     return [newLng, lat];
   });
-  return newPins;
-};
 
 const getURLParams = async pins => {
   const samples = Math.min(NUM_SAMPLES * (pins.length - 1), 500);

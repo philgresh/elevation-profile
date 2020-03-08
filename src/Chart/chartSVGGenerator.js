@@ -1,53 +1,39 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useRef } from 'react';
 // import * as d3 from 'd3';
-import { extent } from 'd3-array';
+import { extent, ticks } from 'd3-array';
 import { axisLeft } from 'd3-axis';
 import { scaleDiverging, scaleLinear } from 'd3-scale';
 import { select, selectAll } from 'd3-selection';
-import { line as d3line, curveMonotoneX } from 'd3-shape';
-import { interpolateRdBu } from 'd3-scale-chromatic';
+import { line as d3line, curveNatural } from 'd3-shape';
+import { interpolateRdYlBu } from 'd3-scale-chromatic';
+import SvgLines from 'react-mt-svg-lines';
 
 const ChartSVG = ({ chartProps, elevationData }) => {
   const { width, height, margin } = chartProps;
 
-  const ref = useRef();
+  const mainRef = useRef();
 
   useEffect(() => {
     selectAll('svg > *').remove();
-    const svg = select(ref.current);
-    svg.attr('viewBox', [0, 0, width, height]);
-
-    // const { minElev, maxElev } = elevationData.reduce(
-    //   (acc, point) => {
-    //     let { min, max } = acc;
-    //     min = Math.min(min, point.elevation);
-    //     max = Math.max(max, point.elevation);
-    //     return { min, max };
-    //   },
-    //   { minElev: Infinity, maxElev: -Infinity },
-    // );
-
-    const color = scaleDiverging(t => interpolateRdBu(1 - t)).domain([
-      -11000,
-      0,
-      9000,
-    ]);
+    const mainSVG = select(mainRef.current);
+    const elevExtent = extent(elevationData, point => point.elevation);
+    const color = scaleDiverging(t => interpolateRdYlBu(1 - t)).domain(
+      elevExtent,
+    );
 
     const x = scaleLinear()
       .domain([0, elevationData.length])
       .range([margin.left, width - margin.right]);
 
     const y = scaleLinear()
-      .domain(extent(elevationData, r => r.elevation))
-      // .domain([minElev, maxElev])
+      .domain(elevExtent)
       .nice()
       .range([height - margin.bottom, margin.top]);
 
     const xAxis = g =>
       g
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        // .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
         .call(g => g.select('.domain').remove());
 
     const yAxis = g =>
@@ -70,47 +56,69 @@ const ChartSVG = ({ chartProps, elevationData }) => {
     //   .domain([maxElev, minElev])
     //   .range([10, height]);
 
-    const line = d3line()
-      .curve(curveMonotoneX)
+    const elevCurve = d3line()
+      .curve(curveNatural)
       .defined(d => !Number.isNaN(d.elevation))
       .x(d => x(d.index))
       .y(d => y(d.elevation));
 
-    svg.append('g').call(xAxis);
+    console.log({
+      zero: y(0),
+      elev0: y(elevExtent[0]),
+      elev1: y(elevExtent[1]),
+    });
+    if (y(0) < y(elevExtent[0]) || y(0) > y(elevExtent[1])) {
+      mainSVG
+        .append('line')
+        .attr('id', 'waterline')
+        .style('stroke', 'lightblue')
+        .style('stroke-opacity', 0.5)
+        .style('fill', '#')
+        .style('stroke-width', 2)
+        .style('stroke-dasharray', '10 5 10')
+        .attr('x1', margin.left)
+        .attr('y1', y(0))
+        .attr('x2', width - margin.right)
+        .attr('y2', y(0));
+    }
 
-    svg.append('g').call(yAxis);
+    mainSVG.append('g').call(xAxis);
+    mainSVG.append('g').call(yAxis);
 
-    const svgDefs = svg.append('defs');
+    const mainSVGDefs = mainSVG.append('defs');
 
-    const mainGradient = svgDefs
+    const mainGradient = mainSVGDefs
       .append('linearGradient')
       .attr('id', 'mainGradient');
 
     mainGradient
       .attr('id', 'gradient')
       .attr('gradientUnits', 'userSpaceOnUse')
-      .attr('x1', 0)
-      .attr('y1', height - margin.bottom)
-      .attr('x2', 0)
-      .attr('y2', margin.top)
+      .attr('x1', margin.left)
+      .attr('y1', margin.top)
+      .attr('x2', width - margin.right)
+      .attr('y2', height - margin.bottom)
       .selectAll('stop')
+      .data(ticks(0, 1, 10))
       .join('stop')
       .attr('offset', d => d)
       .attr('stop-color', color.interpolator());
 
-    svg
+    mainSVG
       .append('path')
       .datum(elevationData)
       .attr('fill', 'transparent')
-      // .attr('stroke', 'url(#gradient)')
+      .attr('stroke', 'url(#gradient)')
       .attr('stroke-width', 3)
       .attr('stroke-linejoin', 'round')
       .attr('stroke-linecap', 'round')
-      .attr('d', line)
-      // .style('stroke', 'url(#gradient)');
-      .style('stroke', '#222');
+      .attr('d', elevCurve);
   }, [elevationData]);
-  return <svg ref={ref} />;
+  return (
+    <SvgLines animate duration={500}>
+      <svg ref={mainRef} viewBox={`0, 0, ${width}, ${height}`} />
+    </SvgLines>
+  );
 };
 
 export default ChartSVG;

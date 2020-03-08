@@ -11,17 +11,18 @@ const StyledButtons = styled.div`
   position: fixed;
   flex-wrap: wrap;
   z-index: 5;
+  margin: 0 2rem;
 `;
 
 const StyledButton = styled.button`
-  flex: 2 1 auto;
+  flex: 2 1 250px;
   border: none;
   background: teal;
   color: white;
   font-size: 1rem;
   border-radius: 0.5rem;
   padding: 1rem;
-  margin: 1rem;
+  margin: 0.5rem;
   -webkit-box-shadow: 0px 5px 5px 1px rgba(34, 34, 34, 0.5);
   -moz-box-shadow: 0px 5px 5px 1px rgba(34, 34, 34, 0.5);
   box-shadow: 0px 5px 5px 1px rgba(34, 34, 34, 0.5);
@@ -33,7 +34,7 @@ const StyledButton = styled.button`
 
 const StyledClearButton = styled(StyledButton)`
   flex: 1 1 auto;
-  background-color: #ffffff;
+  background-color: #eeeeee;
   color: teal;
   &:hover {
     background-color: #dddddd;

@@ -1,7 +1,13 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import ReactMapGL, { Layer, NavigationControl, Source } from 'react-map-gl';
+import { extent, ticks } from 'd3-array';
+import { axisLeft } from 'd3-axis';
+import { scaleDiverging, scaleLinear } from 'd3-scale';
+import { select, selectAll } from 'd3-selection';
+import { line as d3line, curveNatural } from 'd3-shape';
+import { interpolateRdYlBu } from 'd3-scale-chromatic';
 import update from 'immutability-helper';
 import styled from 'styled-components';
 import Markers from './Markers';
@@ -16,17 +22,53 @@ const StyledMap = styled.div`
   /* transition: transform 300ms ease-in-out; */
 `;
 
+export const colorRamp = stop => {
+  const color = scaleDiverging(t => interpolateRdYlBu(1 - t)).domain([
+    0,
+    0.5,
+    1,
+  ]);
+  return color(stop);
+};
+
+const generatePaint = () => {
+  const colorStops = [];
+  ticks(0, 1, 10).forEach(t => {
+    colorStops.push(t);
+    colorStops.push(colorRamp(t));
+  });
+  const paint = {
+    'line-color': '#ff0000',
+    'line-width': 2,
+    'line-gradient': [
+      'interpolate',
+      ['linear'],
+      ['line-progress'],
+      ...colorStops,
+    ],
+  };
+  console.log(paint);
+
+  return paint;
+};
+
 const MapboxContainer = ({ mapHeight, pins, actions }) => {
   const hasPins = pins.length > 0;
   const { pushPin, setPins } = actions;
   const [viewport, setViewport] = useState({
-    height: mapHeight,
+    height: '100vh',
     width: '100vw',
     position: 'absolute',
     longitude: -119,
     latitude: 36,
     zoom: 5,
   });
+
+  const paint = useMemo(() => generatePaint(), []);
+
+  useEffect(() => {
+    setViewport(oldViewport => ({ ...oldViewport, height: mapHeight }));
+  }, [mapHeight, pins]);
 
   const onMapClick = e => {
     e.preventDefault();
@@ -64,26 +106,22 @@ const MapboxContainer = ({ mapHeight, pins, actions }) => {
         mapboxApiAccessToken={MAPBOX_TOKEN}
         mapStyle={mapStyle}
         onViewportChange={onViewportChange}
-        // onLoad={() => setLoaded(true)}
         onClick={e => onMapClick(e)}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...viewport}
-        height={mapHeight}
       >
         {hasPins && (
-          <>
+          <div id="pin-markers">
             <Markers pins={pins} onMarkerDragEnd={onMarkerDragEnd} />
-            <Source id="my-lines" type="geojson" data={linestringGeoJSON}>
-              <Layer
-                id="lines"
-                type="line"
-                paint={{
-                  'line-color': '#ff0000',
-                  'line-width': 2,
-                }}
-              />
+            <Source
+              id="my-lines"
+              type="geojson"
+              data={linestringGeoJSON}
+              lineMetrics
+            >
+              <Layer id="lines" type="line" paint={{ ...paint }} />
             </Source>
-          </>
+          </div>
         )}
         <div style={{ position: 'absolute', right: 0 }}>
           <NavigationControl />
