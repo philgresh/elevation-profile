@@ -15,6 +15,7 @@ const Markers = ({ pins, onMarkerDragEnd }) => {
       key={`${lng},${lat}`}
       title={`${lng},${lat}`}
       onDragEnd={e => onMarkerDragEnd(e, idx)}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...commonProps}
     >
       <Pin size={20} fill="#D00000CC" />

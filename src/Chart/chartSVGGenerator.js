@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useRef } from 'react';
 // import * as d3 from 'd3';
@@ -62,11 +63,11 @@ const ChartSVG = ({ chartProps, elevationData }) => {
       .x(d => x(d.index))
       .y(d => y(d.elevation));
 
-    console.log({
-      zero: y(0),
-      elev0: y(elevExtent[0]),
-      elev1: y(elevExtent[1]),
-    });
+    // console.log({
+    //   zero: y(0),
+    //   elev0: y(elevExtent[0]),
+    //   elev1: y(elevExtent[1]),
+    // });
     if (y(0) < y(elevExtent[0]) || y(0) > y(elevExtent[1])) {
       mainSVG
         .append('line')

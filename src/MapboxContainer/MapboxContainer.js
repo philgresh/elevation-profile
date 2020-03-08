@@ -2,11 +2,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import ReactMapGL, { Layer, NavigationControl, Source } from 'react-map-gl';
-import { extent, ticks } from 'd3-array';
-import { axisLeft } from 'd3-axis';
-import { scaleDiverging, scaleLinear } from 'd3-scale';
-import { select, selectAll } from 'd3-selection';
-import { line as d3line, curveNatural } from 'd3-shape';
+import { ticks } from 'd3-array';
+import { scaleDiverging } from 'd3-scale';
 import { interpolateRdYlBu } from 'd3-scale-chromatic';
 import update from 'immutability-helper';
 import styled from 'styled-components';
@@ -47,7 +44,6 @@ const generatePaint = () => {
       ...colorStops,
     ],
   };
-  console.log(paint);
 
   return paint;
 };
