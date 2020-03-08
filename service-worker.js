@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/elevation-profile/precache-manifest.5cdcbc6de121b469cca673d919f1d0f9.js"
+  "/elevation-profile/precache-manifest.9dd2bd15f0e5f3bdfaf14b69787d39e8.js"
 );
 
 self.addEventListener('message', (event) => {
