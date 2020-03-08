@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/elevation-profile/static/css/main.bad6ad0a.chunk.css",
+    "main.js": "/elevation-profile/static/js/main.69ead0b2.chunk.js",
+    "main.js.map": "/elevation-profile/static/js/main.69ead0b2.chunk.js.map",
+    "runtime-main.js": "/elevation-profile/static/js/runtime-main.14b04b2f.js",
+    "runtime-main.js.map": "/elevation-profile/static/js/runtime-main.14b04b2f.js.map",
+    "static/css/2.3b80cb7c.chunk.css": "/elevation-profile/static/css/2.3b80cb7c.chunk.css",
+    "static/js/2.acfda135.chunk.js": "/elevation-profile/static/js/2.acfda135.chunk.js",
+    "static/js/2.acfda135.chunk.js.map": "/elevation-profile/static/js/2.acfda135.chunk.js.map",
+    "index.html": "/elevation-profile/index.html",
+    "precache-manifest.9dd2bd15f0e5f3bdfaf14b69787d39e8.js": "/elevation-profile/precache-manifest.9dd2bd15f0e5f3bdfaf14b69787d39e8.js",
+    "service-worker.js": "/elevation-profile/service-worker.js",
+    "static/css/2.3b80cb7c.chunk.css.map": "/elevation-profile/static/css/2.3b80cb7c.chunk.css.map",
+    "static/css/main.bad6ad0a.chunk.css.map": "/elevation-profile/static/css/main.bad6ad0a.chunk.css.map",
+    "static/js/2.acfda135.chunk.js.LICENSE.txt": "/elevation-profile/static/js/2.acfda135.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.14b04b2f.js",
+    "static/css/2.3b80cb7c.chunk.css",
+    "static/js/2.acfda135.chunk.js",
+    "static/css/main.bad6ad0a.chunk.css",
+    "static/js/main.69ead0b2.chunk.js"
+  ]
+}
